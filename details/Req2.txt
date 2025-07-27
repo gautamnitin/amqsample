@@ -1,0 +1,189 @@
+ Canonical Payload with Header
+ {
+  "header": {
+    "messageId": "msg-0001",
+    "timestamp": "2025-07-27T06:45:00Z",
+    "eventType": "CustomerFinancialSnapshot",
+    "source": "XYZ",
+    "customerId": "user-001",
+    "region": "US",
+    "priority": "HIGH",
+    "version": "1.0"
+  },
+  "payload": {
+    "customerId": "user-001",
+    "name": {
+      "first": "John",
+      "last": "Doe"
+    },
+    "email": "john.doe@example.com",
+    "lastSyncDate": "2025-07-27T06:00:00Z",
+    "connections": [
+      {
+        "connectionId": "conn-789012",
+        "institutionName": "Bank of America",
+        "aggregationType": "API",
+        "status": "Connected",
+        "createdDate": "2024-11-15T14:20:00Z",
+        "lastSyncDate": "2025-07-27T06:00:00Z"
+      }
+    ],
+    "accounts": [
+      {
+        "accountId": "acc-123456",
+        "accountName": "Fidelity Brokerage",
+        "accountType": "Brokerage",
+        "institutionName": "Fidelity Investments",
+        "balance": 125000.75,
+        "currency": "USD",
+        "status": "Active",
+        "lastUpdated": "2025-07-27T06:30:00Z"
+      }
+    ],
+    "transactions": [
+      {
+        "transactionId": "txn-001",
+        "accountId": "acc-123456",
+        "transactionDate": "2025-07-27",
+        "amount": -75.50,
+        "description": "Dinner at Olive Garden",
+        "category": "Dining",
+        "merchant": "Olive Garden",
+        "type": "Spending",
+        "status": "Posted"
+      },
+      {
+        "transactionId": "txn-002",
+        "accountId": "acc-123456",
+        "transactionDate": "2025-07-27",
+        "amount": -1000.00,
+        "description": "Purchase of 10 shares of AAPL",
+        "category": "Investment",
+        "merchant": "Fidelity Investments",
+        "type": "Investment",
+        "status": "Posted"
+      }
+    ]
+  }
+}
+
+Canonical Model POJO
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class CustomerFinancialMessage {
+    private Header header;
+    private Payload payload;
+
+    // Getters and Setters
+}
+
+2. Header.java
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Header {
+    private String messageId;
+    private String timestamp;
+    private String eventType;
+    private String source;
+    private String customerId;
+    private String region;
+    private String priority;
+    private String version;
+
+    // Getters and Setters
+}
+3. Payload.java
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Payload {
+    private String customerId;
+    private Name name;
+    private String email;
+    private String lastSyncDate;
+    private List<Connection> connections;
+    private List<Account> accounts;
+    private List<Transaction> transactions;
+
+    // Getters and Setters
+}
+
+4. Name.java
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Name {
+    private String first;
+    private String last;
+
+    // Getters and Setters
+}
+
+5. Connection.java
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Connection {
+    private String connectionId;
+    private String institutionName;
+    private String aggregationType;
+    private String status;
+    private String createdDate;
+    private String lastSyncDate;
+
+    // Getters and Setters
+}
+6. Account.java
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Account {
+    private String accountId;
+    private String accountName;
+    private String accountType;
+    private String institutionName;
+    private BigDecimal balance;
+    private String currency;
+    private String status;
+    private String lastUpdated;
+
+    // Getters and Setters
+}
+
+7. Transaction.java
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Transaction {
+    private String transactionId;
+    private String accountId;
+    private String transactionDate;
+    private BigDecimal amount;
+    private String description;
+    private String category;
+    private String merchant;
+    private String type;
+    private String status;
+
+    // Getters and Setters
+}
+
+Transformation Code Using ObjectMapper
+
+ Serialize Java Object to JSON
+ObjectMapper mapper = new ObjectMapper();
+CustomerFinancialMessage message = new CustomerFinancialMessage();
+// populate message object...
+
+String json = mapper.writeValueAsString(message);
+System.out.println("Serialized JSON:\n" + json);
+
+ Deserialize JSON to Java Object
+ String jsonInput = /* your JSON string */;
+CustomerFinancialMessage deserialized = mapper.readValue(jsonInput, CustomerFinancialMessage.class);
+System.out.println("Customer ID: " + deserialized.getPayload().getCustomerId());
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    
+
+

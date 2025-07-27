@@ -1,0 +1,107 @@
+📦 Project Structure
+customer-financial-publisher/
+├── pom.xml
+└── src/
+    └── main/
+        ├── java/com/example/XYZ/
+        │   ├── model/       # POJOs (Header, Payload, etc.)
+        │   ├── config/      # Artemis connection config
+        │   ├── producer/    # Publisher service
+        │   └── controller/  # REST endpoint to trigger publishing
+        └── resources/
+            └── application.yml
+
+
+
+⚙️ Key Components
+1. application.yml
+spring:
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+    packages:
+      trust-all: true
+
+XYZ:
+  destination: queue.customer-financial-update
+
+
+2. Canonical POJOs
+Defined just like in this message, include classes such as:
+- CustomerFinancialMessage
+- Header
+- Payload, with nested Account, Connection, Transaction, etc.
+Make sure each class is annotated with:
+@JsonIgnoreProperties(ignoreUnknown = true)
+
+
+3. Artemis Configuration
+@Configuration
+public class ArtemisConfig {
+    @Bean
+    public JmsTemplate jmsTemplate(ConnectionFactory connectionFactory) {
+        JmsTemplate template = new JmsTemplate(connectionFactory);
+        template.setPubSubDomain(false); // Queue mode
+        return template;
+    }
+}
+
+
+4. Publisher Service
+@Service
+public class FinancialPublisher {
+    private final JmsTemplate jmsTemplate;
+    private final ObjectMapper objectMapper;
+    @Value("${XYZ.destination}")
+    private String destination;
+
+    public FinancialPublisher(JmsTemplate jmsTemplate, ObjectMapper objectMapper) {
+        this.jmsTemplate = jmsTemplate;
+        this.objectMapper = objectMapper;
+    }
+
+    public void publish(CustomerFinancialMessage message) throws JsonProcessingException {
+        String json = objectMapper.writeValueAsString(message);
+        jmsTemplate.convertAndSend(destination, json, msg -> {
+            msg.setStringProperty("customerId", message.getHeader().getCustomerId());
+            msg.setStringProperty("eventType", message.getHeader().getEventType());
+            msg.setStringProperty("timestamp", message.getHeader().getTimestamp());
+            return msg;
+        });
+    }
+}
+
+
+5. REST Controller
+@RestController
+@RequestMapping("/publish")
+public class PublisherController {
+    private final FinancialPublisher publisher;
+
+    public PublisherController(FinancialPublisher publisher) {
+        this.publisher = publisher;
+    }
+
+    @PostMapping
+    public ResponseEntity<?> sendPayload(@RequestBody CustomerFinancialMessage message) {
+        try {
+            publisher.publish(message);
+            return ResponseEntity.ok("Message published successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to publish: " + e.getMessage());
+        }
+    }
+}
+
+
+
+🧪 Test It Out
+Use curl or Postman to post your canonical JSON:
+curl -X POST http://localhost:8080/publish \
+  -H "Content-Type: application/json" \
+  -d @customer_payload.json
+
+
+
+Want me to generate this as actual files for your IDE, or add observability (logging, metrics) around this publisher? We could even enrich it with retry logic or a poison queue handler. Let’s shape this into production-grade elegance.

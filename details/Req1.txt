@@ -1,0 +1,133 @@
+Relationship Mapping
+| Entity 		| Relationship to Customer (userId) | 
+| Account 		| Belongs to a customer; retrieved via /users/{userId}/accounts | 
+| Connection 	| Represents a customer's link to a financial institution; retrieved via /users/{userId}/connections | 
+| Transaction 	| Tied to a specific account under a customer; accessed via /users/{userId}/accounts/{accountId}/transactions | 
+
+
+Customer (userId)
+├── Connections (institution links)
+│   └── Accounts (checking, brokerage, etc.)
+│       └── Transactions (debits, credits, etc.)
+
+
+🧾 Sample HTTP Request: Daily Update for a Customer
+GET https://api.XYZadvisor.com/public/v1/users/{userId}/accounts
+Authorization: Bearer {access_token}
+x-api-key: {your_api_key}
+
+
+You can repeat similar requests for:
+- Connections: /users/{userId}/connections
+- Transactions: /users/{userId}/accounts/{accountId}/transactions?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
+For example, to get today’s transactions:
+GET https://api.XYZadvisor.com/public/v1/users/{userId}/accounts/{accountId}/transactions?startDate=2025-07-27&endDate=2025-07-27
+Authorization: Bearer {access_token}
+x-api-key: {your_api_key}
+
+Here's a set of sample JSON payloads that reflect typical responses from XYZ’s API for Account, Connection, and Transaction entities. These are modeled to align with the structure you'd expect when querying /users/{userId}/accounts, /connections, and /transactions.
+
+🧾 Sample Account JSON
+{
+  "accountId": "acc-123456",
+  "accountName": "Fidelity Brokerage",
+  "accountType": "Brokerage",
+  "institutionName": "Fidelity Investments",
+  "balance": 125000.75,
+  "currency": "USD",
+  "status": "Active",
+  "lastUpdated": "2025-07-27T06:30:00Z"
+}
+
+Sample Connection JSO
+{
+  "connectionId": "conn-789012",
+  "institutionName": "Bank of America",
+  "aggregationType": "API",
+  "status": "Connected",
+  "createdDate": "2024-11-15T14:20:00Z",
+  "lastSyncDate": "2025-07-27T06:00:00Z"
+}
+Sample Transaction JSO
+{
+  "transactionId": "txn-456789",
+  "accountId": "acc-123456",
+  "transactionDate": "2025-07-27",
+  "amount": -250.00,
+  "description": "Amazon Purchase",
+  "category": "Shopping",
+  "merchant": "Amazon.com",
+  "status": "Posted"
+}
+ Sample JSON: Spending Transactio
+{
+  "transactionId": "txn-001",
+  "accountId": "acc-123456",
+  "transactionDate": "2025-07-27",
+  "amount": -75.50,
+  "description": "Dinner at Olive Garden",
+  "category": "Dining",
+  "merchant": "Olive Garden",
+  "type": "Spending",
+  "status": "Posted"
+}
+ Sample JSON: Investment Transactio
+{
+  "transactionId": "txn-002",
+  "accountId": "acc-123456",
+  "transactionDate": "2025-07-27",
+  "amount": -1000.00,
+  "description": "Purchase of 10 shares of AAPL",
+  "category": "Investment",
+  "merchant": "Fidelity Investments",
+  "type": "Investment",
+  "status": "Posted"
+}
+Integration Tip
+You can use the "type" or "category" field to segment transactions for:
+- Cash flow modeling
+- PnL attribution
+- Behavioral analytics
+
+
+Can you define POJOs for Account, Connection, and Transaction as per XYZ API responses
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Account {
+    private String accountId;
+    private String accountName;
+    private String accountType;
+    private String institutionName;
+    private BigDecimal balance;
+    private String currency;
+    private String status;
+    private LocalDateTime lastUpdated;
+
+    // Getters and Setters
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Connection {
+    private String connectionId;
+    private String institutionName;
+    private String aggregationType; // e.g., API, bulk file, screen scraping
+    private String status;
+    private LocalDateTime createdDate;
+    private LocalDateTime lastSyncDate;
+
+    // Getters and Setters
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Transaction {
+    private String transactionId;
+    private String accountId;
+    private LocalDate transactionDate;
+    private BigDecimal amount;
+    private String description;
+    private String category;
+    private String merchant;
+    private String status;
+
+    // Getters and Setters
+}
