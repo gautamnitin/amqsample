@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.jmsmq.amqsample.model.CacheNames.ADDRESS;
 import static com.jmsmq.amqsample.model.CacheNames.EMPLOYEE;
+import static com.jmsmq.amqsample.model.CacheNames.ACCOUNT;
 
 @Configuration
 @EnableCaching
@@ -27,7 +28,7 @@ public class CacheConfig {
 
     @Bean
     public CacheManager cacheManager(Caffeine<Object, Object> caffeine) {
-        return new CaffeineCacheManager(EMPLOYEE, ADDRESS) {{
+        return new CaffeineCacheManager(EMPLOYEE, ADDRESS, ACCOUNT) {{
             setCaffeine(caffeine);
         }};
     }

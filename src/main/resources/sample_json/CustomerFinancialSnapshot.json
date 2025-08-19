@@ -1,0 +1,57 @@
+{
+  "header": {
+    "messageId": "msg-0001",
+    "timestamp": "2025-07-27T06:45:00Z",
+    "eventType": "CustomerFinancialSnapshot",
+    "source": "eMoney",
+    "customerId": "user-001"
+  },
+  "payload": {
+    "connections": [
+      {
+        "connectionId": "conn-789012",
+        "institutionName": "Bank of America",
+        "aggregationType": "API",
+        "status": "Connected",
+        "createdDate": "2024-11-15T14:20:00Z",
+        "lastSyncDate": "2025-07-27T06:00:00Z"
+      }
+    ],
+    "accounts": [
+      {
+        "accountId": "acc-123456",
+        "accountName": "Fidelity Brokerage",
+        "accountType": "Brokerage",
+        "institutionName": "Fidelity Investments",
+        "balance": 125000.75,
+        "currency": "USD",
+        "status": "Active",
+        "lastUpdated": "2025-07-27T06:30:00Z"
+      }
+    ],
+    "transactions": [
+      {
+        "transactionId": "txn-001",
+        "accountId": "acc-123456",
+        "transactionDate": "2025-07-27",
+        "amount": -75.50,
+        "description": "Dinner at Olive Garden",
+        "category": "Dining",
+        "merchant": "Olive Garden",
+        "type": "Spending",
+        "status": "Posted"
+      },
+      {
+        "transactionId": "txn-002",
+        "accountId": "acc-123456",
+        "transactionDate": "2025-07-27",
+        "amount": -1000.00,
+        "description": "Purchase of 10 shares of AAPL",
+        "category": "Investment",
+        "merchant": "Fidelity Investments",
+        "type": "Investment",
+        "status": "Posted"
+      }
+    ]
+  }
+}

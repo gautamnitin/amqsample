@@ -27,6 +27,7 @@ public class MessageProducerController {
     private ObjectMapper objectMapper;
 
     @Autowired
+    @org.springframework.beans.factory.annotation.Qualifier("tradeQueue")
     private Queue queue; // Injected from your config (can also be created manually)
 
     @Operation(

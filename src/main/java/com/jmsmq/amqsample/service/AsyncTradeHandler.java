@@ -1,7 +1,7 @@
 package com.jmsmq.amqsample.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jmsmq.amqsample.component.processors.TradeDispatcher;
+import com.jmsmq.amqsample.component.processors.trade.TradeDispatcher;
 import com.jmsmq.amqsample.model.Trade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;

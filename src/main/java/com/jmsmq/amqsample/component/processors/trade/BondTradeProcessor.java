@@ -1,4 +1,4 @@
-package com.jmsmq.amqsample.component.processors;
+package com.jmsmq.amqsample.component.processors.trade;
 
 import com.jmsmq.amqsample.component.DlqPublisher;
 import com.jmsmq.amqsample.model.AssetType;

@@ -1,11 +1,10 @@
-package com.jmsmq.amqsample.component.processors;
+package com.jmsmq.amqsample.component.processors.trade;
 
 import com.jmsmq.amqsample.model.AssetType;
 import com.jmsmq.amqsample.model.Trade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;

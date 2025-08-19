@@ -1,5 +1,6 @@
 package com.jmsmq.amqsample.component;
 
+import com.jmsmq.amqsample.model.CustomerFinancialSnapshot;
 import com.jmsmq.amqsample.model.DLQMessage;
 import com.jmsmq.amqsample.model.Trade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,11 @@ public class DlqPublisher {
 
     public void publish(Trade trade, String errorMsg) {
         DLQMessage message = new DLQMessage(trade, errorMsg);
+        jmsTemplate.convertAndSend("dlq.queue", message);
+    }
+    
+    public void publish(CustomerFinancialSnapshot snapshot, String errorMsg) {
+        DLQMessage message = new DLQMessage(snapshot, errorMsg);
         jmsTemplate.convertAndSend("dlq.queue", message);
     }
 }

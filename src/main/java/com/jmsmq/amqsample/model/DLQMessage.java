@@ -5,8 +5,9 @@ import java.time.LocalDateTime;
 
 public class DLQMessage {
 
-    private String tradeId;
-    private String tradeType;
+    private String messageId;
+    private String messageType;
+    private String customerId;
     private double amount;
     private String error;
     private LocalDateTime timestamp;
@@ -14,29 +15,46 @@ public class DLQMessage {
     public DLQMessage() { }
 
     public DLQMessage(Trade trade, String errorMessage) {
-        this.tradeId = trade.getId();
-        this.tradeType = trade.getType();
+        this.messageId = trade.getId();
+        this.messageType = trade.getType();
         this.amount = trade.getAmount();
+        this.error = errorMessage;
+        this.timestamp = LocalDateTime.now();
+    }
+    
+    public DLQMessage(CustomerFinancialSnapshot snapshot, String errorMessage) {
+        this.messageId = snapshot.getHeader().getMessageId();
+        this.messageType = snapshot.getHeader().getEventType();
+        this.customerId = snapshot.getHeader().getCustomerId();
+        this.amount = 0.0; // No direct amount in snapshot
         this.error = errorMessage;
         this.timestamp = LocalDateTime.now();
     }
 
     // Getters and setters
 
-    public String getTradeId() {
-        return tradeId;
+    public String getMessageId() {
+        return messageId;
     }
 
-    public void setTradeId(String tradeId) {
-        this.tradeId = tradeId;
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 
-    public String getTradeType() {
-        return tradeType;
+    public String getMessageType() {
+        return messageType;
     }
 
-    public void setTradeType(String tradeType) {
-        this.tradeType = tradeType;
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
+    }
+    
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
     public double getAmount() {
@@ -66,8 +84,9 @@ public class DLQMessage {
     @Override
     public String toString() {
         return "DLQMessage{" +
-                "tradeId='" + tradeId + '\'' +
-                ", tradeType='" + tradeType + '\'' +
+                "messageId='" + messageId + '\'' +
+                ", messageType='" + messageType + '\'' +
+                ", customerId='" + customerId + '\'' +
                 ", amount=" + amount +
                 ", error='" + error + '\'' +
                 ", timestamp=" + timestamp +

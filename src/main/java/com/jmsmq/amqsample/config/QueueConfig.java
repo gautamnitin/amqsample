@@ -9,10 +9,16 @@ import org.springframework.context.annotation.Configuration;
 public class QueueConfig {
 
     public static final String TRADE_QUEUE = "trade.queue";
+    public static final String FINANCIAL_SNAPSHOT_QUEUE = "financial.snapshot.queue";
 
     @Bean
-    public Queue queue() {
+    public Queue tradeQueue() {
         return new ActiveMQQueue(TRADE_QUEUE);
+    }
+    
+    @Bean
+    public Queue financialSnapshotQueue() {
+        return new ActiveMQQueue(FINANCIAL_SNAPSHOT_QUEUE);
     }
 
 }
