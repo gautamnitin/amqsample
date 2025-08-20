@@ -4,6 +4,7 @@ import com.jmsmq.amqsample.component.DlqPublisher;
 import com.jmsmq.amqsample.model.CustomerFinancialSnapshot;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Abstract base class for financial data processors that implements common functionality
@@ -26,6 +27,7 @@ public abstract class AbstractFinancialDataProcessor implements FinancialDataPro
     }
 
     @Override
+    @Transactional
     public void process(CustomerFinancialSnapshot snapshot) {
         // Start metrics timer
         Timer.Sample sample = Timer.start(meterRegistry);

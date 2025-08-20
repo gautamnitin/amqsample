@@ -32,6 +32,10 @@ public class AccountProcessor extends AbstractGenericFinancialDataProcessor<Cust
         this.accountService = accountService;
     }
 
+    public long getCount() {
+        return accountService.countAccounts();
+    }
+
     @Override
     protected List<CustomerFinancialSnapshot.Account> extractModelList(CustomerFinancialSnapshot snapshot) {
         return snapshot.getPayload().getAccounts();
@@ -49,18 +53,15 @@ public class AccountProcessor extends AbstractGenericFinancialDataProcessor<Cust
         System.out.println("Processing " + accounts.size() + " accounts for customer: " + 
                 snapshot.getHeader().getCustomerId());
 
-        // Process in batches of 100 for better performance
+        // Process in batches of 100 for better performance using a single-stream batching utility
         final int batchSize = 100;
-        
-        // Use a single parallel stream to process accounts
-        accounts.parallelStream()
-            .map(getTransformer()::transformToEntity)
-            .collect(java.util.stream.Collectors.groupingBy(
-                account -> Math.floorMod(account.getAccountId().hashCode(), (int)Math.ceil((double)accounts.size() / batchSize)),
-                java.util.stream.Collectors.toList()
-            ))
-            .values()
-            .forEach(this::saveAccountBatch);
+
+        com.jmsmq.amqsample.util.BatchingUtils.mapAndBatch(
+                accounts.stream(),
+                getTransformer()::transformToEntity,
+                batchSize,
+                this::saveAccountBatch
+        );
         
         System.out.println("Successfully processed accounts for customer: " + snapshot.getHeader().getCustomerId());
     }

@@ -34,12 +34,13 @@ public class AccountProcessorPerformanceTest {
      */
     @Test
     public void testLargeBatchProcessing() throws IOException {
+        int count = 1059;
         // Load sample snapshot from JSON file
         InputStream is = getClass().getClassLoader().getResourceAsStream("sample_json/CustomerFinancialSnapshot.json");
         CustomerFinancialSnapshot baseSnapshot = objectMapper.readValue(is, CustomerFinancialSnapshot.class);
         
         // Create a large snapshot with many accounts
-        CustomerFinancialSnapshot largeSnapshot = createLargeSnapshot(baseSnapshot, 1000);
+        CustomerFinancialSnapshot largeSnapshot = createLargeSnapshot(baseSnapshot, count);
         
         // Measure processing time
         long startTime = System.currentTimeMillis();
@@ -50,7 +51,7 @@ public class AccountProcessorPerformanceTest {
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
         
-        System.out.println("[DEBUG_LOG] Processed 1000 accounts in " + duration + " ms");
+        System.out.println("[DEBUG_LOG] Processed " +count+ " accounts in " + duration + " ms" + " actual count: " + accountProcessor.getCount());
         System.out.println("[DEBUG_LOG] Average time per account: " + (duration / 1000.0) + " ms");
     }
     

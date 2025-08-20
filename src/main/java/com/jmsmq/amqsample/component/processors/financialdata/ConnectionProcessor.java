@@ -43,15 +43,19 @@ public class ConnectionProcessor extends AbstractGenericFinancialDataProcessor<C
         System.out.println("Processing " + connections.size() + " connections for customer: " + 
                 snapshot.getHeader().getCustomerId());
 
-        // Transform connections to entities
-        connections.stream()
-            .map(getTransformer()::transformToEntity)
-            .forEach(connectionEntity -> {
-                // Merge to handle both insert and update
-                entityManager.merge(connectionEntity);
-            });
+        // Transform connections to entities and persist in batches using a single stream
+        final int batchSize = 100;
+        com.jmsmq.amqsample.util.BatchingUtils.mapAndBatch(
+                connections.stream(),
+                getTransformer()::transformToEntity,
+                batchSize,
+                batch -> {
+                    batch.forEach(entityManager::merge);
+                    entityManager.flush();
+                    entityManager.clear();
+                }
+        );
         
-        entityManager.flush();
         System.out.println("Successfully processed connections for customer: " + snapshot.getHeader().getCustomerId());
     }
 }

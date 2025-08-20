@@ -4,6 +4,7 @@ import com.jmsmq.amqsample.component.DlqPublisher;
 import com.jmsmq.amqsample.model.CustomerFinancialSnapshot;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +40,7 @@ public abstract class AbstractGenericFinancialDataProcessor<M, E> implements Fin
     }
 
     @Override
+    @Transactional
     public void process(CustomerFinancialSnapshot snapshot) {
         // Start metrics timer
         Timer.Sample sample = Timer.start(meterRegistry);
